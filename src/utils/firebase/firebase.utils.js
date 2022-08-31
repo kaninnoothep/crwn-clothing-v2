@@ -19,24 +19,31 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
+// Create Google Provider
 const provider = new GoogleAuthProvider();
 
 provider.setCustomParameters({
   prompt: "select_account",
 });
 
+// Get Ref Auth
 export const auth = getAuth();
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 export const signInWithGoogleRedirect = () =>
   signInWithRedirect(auth, provider);
 
+// Get FireStore Database
 export const db = getFirestore();
 
+// Create users Document to FireStore
 export const createUserDocumentFromAuth = async (userAuth) => {
+  // Get User Document in Users Collection
   const userDocRef = doc(db, "users", userAuth.uid);
 
+  // Get User detail in User Document
   const userSnapshot = await getDoc(userDocRef);
 
+  // if User detail NOT exists -> Create User Document in Users Collection
   if (!userSnapshot.exists()) {
     const { displayName, email } = userAuth;
     const createdAt = new Date();
