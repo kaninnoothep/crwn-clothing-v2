@@ -5,6 +5,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
@@ -20,8 +21,10 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
+// SECTION Firebase Authentication part ===========================
+
 // Create Google Provider
-const provider = new GoogleAuthProvider();
+const provider = new GoogleAuthProvider(firebaseApp);
 
 provider.setCustomParameters({
   prompt: "select_account",
@@ -33,10 +36,28 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 export const signInWithGoogleRedirect = () =>
   signInWithRedirect(auth, provider);
 
+// NOTE Sign Up User with Email & Password
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return await createUserWithEmailAndPassword(auth, email, password);
+};
+
+// NOTE Sign In User with Email & Password
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return await signInWithEmailAndPassword(auth, email, password);
+};
+
+// !SECTION END Authentication part =================================
+
+// SECTION FireStore Database part =================================
+
 // NOTE Get FireStore Database
 export const db = getFirestore();
 
-// NOTE Create Users Document to FireStore
+// NOTE Get Users Collection -> Add User Document to FireStore
 export const createUserDocumentFromAuth = async (
   userAuth,
   additionalInformation = {}
@@ -67,9 +88,4 @@ export const createUserDocumentFromAuth = async (
   return userDocRef;
 };
 
-// NOTE Sign Up User with Email & Password
-export const createAuthUserWithEmailAndPassword = async (email, password) => {
-  if (!email || !password) return;
-
-  return await createUserWithEmailAndPassword(auth, email, password);
-};
+// !SECTION END FireStore Database part ===========================
