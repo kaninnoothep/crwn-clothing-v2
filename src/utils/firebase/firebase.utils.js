@@ -17,6 +17,8 @@ import {
   setDoc,
   collection,
   writeBatch,
+  query,
+  getDocs,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -91,7 +93,42 @@ export const addCollectionAndDocuments = async (
   console.log("done");
 };
 
+/*
+NOTE Object that we have in firebase
+[
+  hats:{
+    title: 'Hats',
+    items: [
+      {},
+      {}
+    ]
+  },
+  sneakers: {
+    title: 'Sneakers',
+    items: [
+      {},
+      {}
+    ]
+  }
+]
+*/
+export const getCategoriesAndDocuments = async () => {
+  // Access collection
+  const collectionRef = collection(db, "categories");
+  // Use query by Collection Ref
+  const q = query(collectionRef);
 
+  // all Docs Snapshot in Collection 'categories'
+  const querySnapshot = await getDocs(q);
+  // querySnapshot.docs -> give an array of all Docs
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
+};
 
 // NOTE Get Users Collection -> Add User Document to FireStore
 export const createUserDocumentFromAuth = async (
