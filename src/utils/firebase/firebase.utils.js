@@ -10,7 +10,14 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-9EohGCMBI6EonCfMHvwrgFCDH_lXpQw",
@@ -63,6 +70,28 @@ export const onAuthStateChangedListener = (callback) =>
 
 // NOTE Get FireStore Database
 export const db = getFirestore();
+
+// NOTE Add Object to Collection
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  // Get Collection Ref
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach((object) => {
+    // Create a Document ref with auto-generated ID
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    // Use batch.set to set Document
+    batch.set(docRef, object);
+  });
+
+  await batch.commit();
+  console.log("done");
+};
+
+
 
 // NOTE Get Users Collection -> Add User Document to FireStore
 export const createUserDocumentFromAuth = async (
