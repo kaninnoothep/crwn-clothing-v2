@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 
-export const newCartItems = (cartItems, productToAdd) => {
+export const itemToAdd = (cartItems, productToAdd) => {
   // ANCHOR if it exitst -> return object that add product to existing object
   // NOTE Find an exist item in cartItems
   const existingCartItem = cartItems.find(
@@ -44,7 +44,7 @@ export const CartProvider = ({ children }) => {
 
   // NOTE Method to add Item to Cart
   const addItemToCart = (product) => {
-    setCartItems(newCartItems(cartItems, product));
+    setCartItems(itemToAdd(cartItems, product));
   };
 
   const value = {
